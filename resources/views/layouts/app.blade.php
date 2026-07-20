@@ -1,32 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-
+<>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        @hasSection('title')
-            @yield('title') | {{ setting('site_name', 'FutureMap Media') }}
-        @else
-            {{ setting('site_name', 'FutureMap Media') }}
-        @endif
-    </title>
+    @php
+        $siteName = setting('site_name', 'FutureMap Media');
+        $pageTitle = trim($__env->yieldContent('title'));
+        $title = $pageTitle ? $pageTitle . ' | ' . $siteName : $siteName;
 
-    <meta name="description" content="@yield('meta_description', setting('meta_description'))">
+        $description = trim($__env->yieldContent('meta_description', setting('meta_description', 'FutureMap Media provides news, magazines, articles and insightful media content.')));
+        $keywords = trim($__env->yieldContent('meta_keywords', setting('meta_keywords', 'FutureMap Media, News, Magazine, Articles')));
+        $ogTitle = trim($__env->yieldContent('og_title', $title));
+        $ogDescription = trim($__env->yieldContent('og_description', $description));
 
-    <meta name="keywords" content="@yield('meta_keywords', setting('meta_keywords'))">
+        $defaultLogo = setting_asset(setting('logo'), 'frontend/assets/images/logo.png');
+        $sharedImage = trim($__env->yieldContent('og_image', $defaultLogo));
 
-    <meta property="og:title" content="@yield('og_title', setting('site_name', 'FutureMap Media'))">
+        if ($sharedImage && !str_starts_with($sharedImage, 'http://') && !str_starts_with($sharedImage, 'https://')) {
+            $sharedImage = url($sharedImage);
+        }
 
-    <meta property="og:description" content="@yield('og_description', setting('meta_description'))">
+        $canonicalUrl = url()->current();
+    @endphp
 
-    <meta property="og:image" content="@yield('og_image', setting_asset(setting('logo'), 'frontend/assets/images/logo.png'))">
+    <title>{{ $title }}</title>
+
+    <meta name="description" content="{{ $description }}">
+    <meta name="keywords" content="{{ $keywords }}">
+    <meta name="author" content="{{ $siteName }}">
+    <meta name="robots" content="index,follow">
+
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="{{ $siteName }}">
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:title" content="{{ $ogTitle }}">
+    <meta property="og:description" content="{{ $ogDescription }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    <meta property="og:image" content="{{ $sharedImage }}">
+    <meta property="og:image:secure_url" content="{{ $sharedImage }}">
+    <meta property="og:image:type" content="@yield('og_image_type', 'image/png')">
+    <meta property="og:image:width" content="@yield('og_image_width', '1200')">
+    <meta property="og:image:height" content="@yield('og_image_height', '630')">
+    <meta property="og:image:alt" content="@yield('og_image_alt', $ogTitle)">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $ogTitle }}">
+    <meta name="twitter:description" content="{{ $ogDescription }}">
+    <meta name="twitter:image" content="{{ $sharedImage }}">
+    <meta name="twitter:image:alt" content="@yield('og_image_alt', $ogTitle)">
 
     @if (setting('favicon'))
-        <link rel="icon" href="{{ setting_asset(setting('favicon')) }}">
+        <link rel="icon" type="image/png" href="{{ setting_asset(setting('favicon')) }}">
+        <link rel="shortcut icon" href="{{ setting_asset(setting('favicon')) }}">
+    @else
+        <link rel="icon" type="image/png" href="{{ asset('frontend/assets/images/favicon.png') }}">
     @endif
+
+    @stack('meta')
 
     @include('frontend.partials.styles')
 

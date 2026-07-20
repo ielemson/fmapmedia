@@ -11,6 +11,7 @@
 @include("frontend.partials.banner",["header"=>" News"])
 
     <section class="content-inner">
+        
         <div class="container">
 
             <div class="section-head style-1 text-center">
@@ -347,18 +348,6 @@
                                                         <img src="{{ asset($recentPost->image_url) }}"
                                                             alt="{{ $recentPost->title }}"
                                                             loading="lazy">
-{{-- 
-                                                    @elseif($recentPost->old_image)
-
-                                                        <img src="{{ asset($recentPost->old_image) }}"
-                                                            alt="{{ $recentPost->title }}"
-                                                            loading="lazy">
-
-                                                    @else --}}
-
-                                                        {{-- <img src="{{ asset('frontend/images/blog/default-news.jpg') }}"
-                                                            alt="{{ $recentPost->title }}"
-                                                            loading="lazy"> --}}
 
                                                     @endif
 
