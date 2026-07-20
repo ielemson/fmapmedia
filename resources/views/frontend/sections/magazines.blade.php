@@ -5,19 +5,23 @@
             <h6 class="text-primary sub-title">FMAP Publications</h6>
             <h2 class="title">Latest Magazine Issues</h2>
         </div>
+
         <div class="row g-4">
             @forelse($magazines as $index => $magazine)
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="dz-card blog-grid style-2 h-100 aos-item"
                         data-aos-delay="{{ 200 + $index * 100 }}">
+
                         <div class="dz-media">
                             <a href="{{ route('magazine.show', $magazine->slug) }}">
                                 <img src="{{ asset('storage/' . $magazine->image) }}" alt="{{ $magazine->name }}">
                             </a>
+
                             <span class="badge bg-primary position-absolute top-0 start-0 m-3">
                                 ₦{{ number_format($magazine->price, 2) }}
                             </span>
                         </div>
+
                         <div class="dz-info text-center">
                             <div class="dz-meta">
                                 <ul class="justify-content-center">
@@ -26,36 +30,38 @@
                                     </li>
                                 </ul>
                             </div>
+
                             <h5 class="dz-title">
                                 <a href="{{ route('magazine.show', $magazine->slug) }}">
                                     {{ $magazine->name }}
                                 </a>
                             </h5>
+
                             <div class="dz-post-text">
                                 <p>
                                     {{ Str::limit(strip_tags($magazine->desc), 120) }}
                                 </p>
                             </div>
-                            <div class="d-flex justify-content-center gap-2 mt-4">
-                               <a href="javascript:;"
-   class="btn btn-outline-primary btn-sm rounded-pill px-4 btn-read-magazine"
-   data-title="{{ $magazine->name }}"
-   data-image="{{ asset('storage/' . $magazine->image) }}"
-   data-price="₦{{ number_format($magazine->price, 2) }}"
-   data-date="{{ optional($magazine->published_at)->format('d M Y') }}"
-   data-description="{{ strip_tags($magazine->desc) }}"
-   data-checkout="{{ route('checkout.show', $magazine->slug) }}">
-    <i class="fa fa-eye me-1"></i>
-    Read More
-</a>
 
-<a href="{{ route('checkout.show', $magazine->slug) }}"
-   class="btn btn-primary btn-sm rounded-pill px-4">
-    <i class="fa fa-shopping-cart me-1"></i>
-    Buy Now
-</a>
+                            <div class="d-flex justify-content-center gap-2 mt-4">
+                                <a href="javascript:;"
+                                   class="btn btn-outline-primary btn-sm rounded-pill px-4 btn-read-magazine"
+                                   data-title="{{ $magazine->name }}"
+                                   data-image="{{ asset('storage/' . $magazine->image) }}"
+                                   data-price="₦{{ number_format($magazine->price, 2) }}"
+                                   data-date="{{ optional($magazine->published_at)->format('d M Y') }}"
+                                   data-description="{{ strip_tags($magazine->desc) }}"
+                                   data-checkout="{{ route('checkout.show', $magazine->slug) }}">
+                                    <i class="fa fa-eye me-1"></i> Read More
+                                </a>
+
+                                <a href="{{ route('checkout.show', $magazine->slug) }}"
+                                   class="btn btn-primary btn-sm rounded-pill px-4">
+                                    <i class="fa fa-shopping-cart me-1"></i> Buy Now
+                                </a>
                             </div>
                         </div>
+
                     </div>
                 </div>
             @empty
@@ -64,6 +70,17 @@
                 </div>
             @endforelse
         </div>
+
+        @if($magazines->count() >= 6)
+            <div class="text-center mt-5">
+                <a href="{{ route('magazines.index') }}"
+                   class="btn btn-primary rounded-pill px-5 py-3">
+                    View More Magazines
+                    <i class="fa fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        @endif
+
     </div>
 </section>
 
