@@ -76,7 +76,7 @@ class ProductController extends Controller
                 'nullable',
                 'file',
                 'mimes:pdf,doc,docx',
-                'max:5120'
+                'max:51200'
             ],
         ]);
 
@@ -204,7 +204,7 @@ class ProductController extends Controller
                 'nullable',
                 'file',
                 'mimes:pdf,doc,docx',
-                'max:5120'
+                'max:51200'
             ],
         ]);
 
