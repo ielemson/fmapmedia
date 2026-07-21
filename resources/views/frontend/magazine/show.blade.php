@@ -1,33 +1,69 @@
 @extends('layouts.app')
 
 @php
-    $magazineDescription = Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($magazine->desc ?? ''))), 200, '');
-    $magazineUrl = route('magazine.show', $magazine->slug);
-    $magazineImage = $magazine->image ? asset('storage/' . ltrim($magazine->image, '/')) : asset("frontend/images/default-magazine.jpg");
+    $magazineDescription = Str::limit(
+        trim(
+            preg_replace(
+                '/\s+/',
+                ' ',
+                strip_tags($magazine->desc ?? '')
+            )
+        ),
+        200,
+        ''
+    );
 
-    $imageExtension = strtolower(pathinfo(parse_url($magazineImage, PHP_URL_PATH), PATHINFO_EXTENSION));
+    $magazineUrl = route(
+        'magazine.show',
+        $magazine->slug
+    );
+
+    $imagePath = $magazine->image
+        ? ltrim($magazine->image, '/')
+        : null;
+
+    $magazineImage = $imagePath
+        ? url('storage/' . $imagePath)
+        : asset('frontend/images/default-magazine.jpg');
+
+    $imageExtension = strtolower(
+        pathinfo(
+            parse_url($magazineImage, PHP_URL_PATH),
+            PATHINFO_EXTENSION
+        )
+    );
 
     $magazineImageType = match ($imageExtension) {
         'jpg', 'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
         'webp' => 'image/webp',
         'gif' => 'image/gif',
-        default => 'image/png',
+        default => 'image/jpeg',
     };
 @endphp
 
 @section('title', $magazine->name)
+
 @section('meta_description', $magazineDescription)
-@section('meta_keywords', $magazine->name . ', FutureMap Media, digital magazine, African magazine, leadership, development')
+
+@section(
+    'meta_keywords',
+    $magazine->name . ', FutureMap Media, digital magazine, African magazine, leadership, development'
+)
+
 @section('canonical_url', $magazineUrl)
 
 @section('og_type', 'article')
+@section('og_url', $magazineUrl)
 @section('og_title', $magazine->name . ' | FutureMap Media')
 @section('og_description', $magazineDescription)
 @section('og_image', $magazineImage)
+@section('og_image_secure_url', $magazineImage)
 @section('og_image_type', $magazineImageType)
 @section('og_image_alt', $magazine->name . ' magazine cover')
 
 @section('twitter_card', 'summary_large_image')
+@section('twitter_url', $magazineUrl)
 @section('twitter_title', $magazine->name . ' | FutureMap Media')
 @section('twitter_description', $magazineDescription)
 @section('twitter_image', $magazineImage)

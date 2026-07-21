@@ -9,6 +9,7 @@
         $siteName = setting('site_name', 'FutureMap Media');
 
         $pageTitle = trim($__env->yieldContent('title'));
+
         $title = $pageTitle
             ? $pageTitle . ' | ' . $siteName
             : $siteName;
@@ -35,6 +36,14 @@
             $__env->yieldContent('canonical_url', url()->current())
         );
 
+        if (
+            $canonicalUrl &&
+            !str_starts_with($canonicalUrl, 'http://') &&
+            !str_starts_with($canonicalUrl, 'https://')
+        ) {
+            $canonicalUrl = url('/' . ltrim($canonicalUrl, '/'));
+        }
+
         /*
         |--------------------------------------------------------------------------
         | Open Graph Settings
@@ -48,6 +57,14 @@
         $ogUrl = trim(
             $__env->yieldContent('og_url', $canonicalUrl)
         );
+
+        if (
+            $ogUrl &&
+            !str_starts_with($ogUrl, 'http://') &&
+            !str_starts_with($ogUrl, 'https://')
+        ) {
+            $ogUrl = url('/' . ltrim($ogUrl, '/'));
+        }
 
         $ogTitle = trim(
             $__env->yieldContent('og_title', $title)
@@ -91,15 +108,21 @@
         );
 
         $ogImageType = trim(
-            $__env->yieldContent('og_image_type', 'image/jpeg')
+            $__env->yieldContent('og_image_type', '')
         );
 
+        /*
+        |--------------------------------------------------------------------------
+        | Do not force dimensions for portrait magazine covers
+        |--------------------------------------------------------------------------
+        */
+
         $ogImageWidth = trim(
-            $__env->yieldContent('og_image_width', '1200')
+            $__env->yieldContent('og_image_width', '')
         );
 
         $ogImageHeight = trim(
-            $__env->yieldContent('og_image_height', '630')
+            $__env->yieldContent('og_image_height', '')
         );
 
         /*
@@ -115,6 +138,14 @@
         $twitterUrl = trim(
             $__env->yieldContent('twitter_url', $canonicalUrl)
         );
+
+        if (
+            $twitterUrl &&
+            !str_starts_with($twitterUrl, 'http://') &&
+            !str_starts_with($twitterUrl, 'https://')
+        ) {
+            $twitterUrl = url('/' . ltrim($twitterUrl, '/'));
+        }
 
         $twitterTitle = trim(
             $__env->yieldContent('twitter_title', $ogTitle)
@@ -150,7 +181,11 @@
     @endif
 
     <meta name="author" content="{{ $siteName }}">
-    <meta name="robots" content="@yield('meta_robots', 'index, follow, max-image-preview:large')">
+
+    <meta
+        name="robots"
+        content="@yield('meta_robots', 'index, follow, max-image-preview:large')"
+    >
 
     <link rel="canonical" href="{{ $canonicalUrl }}">
 
@@ -191,10 +226,22 @@
 
     {{-- Favicon --}}
     @if(setting('favicon'))
-        <link rel="icon" type="image/png" href="{{ setting_asset(setting('favicon')) }}">
-        <link rel="shortcut icon" href="{{ setting_asset(setting('favicon')) }}">
+        <link
+            rel="icon"
+            type="image/png"
+            href="{{ setting_asset(setting('favicon')) }}"
+        >
+
+        <link
+            rel="shortcut icon"
+            href="{{ setting_asset(setting('favicon')) }}"
+        >
     @else
-        <link rel="icon" type="image/png" href="{{ asset("frontend/images/favicon.png") }}">
+        <link
+            rel="icon"
+            type="image/png"
+            href="{{ asset('frontend/images/favicon.png') }}"
+        >
     @endif
 
     @stack('meta')
