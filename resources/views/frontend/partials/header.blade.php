@@ -184,7 +184,7 @@
                         </li>
              
                         <li
-                            class="sub-menu-down {{ request()->routeIs('login') || request()->routeIs('dashboard') || request()->routeIs('admin.dashboard') || request()->routeIs('vendor.dashboard') || request()->routeIs('customer.dashboard') ? 'active' : '' }}">
+                            class="sub-menu-down {{ request()->routeIs('login') || request()->routeIs('dashboard') ? 'active' : '' }}">
                             <a href="javascript:void(0);">
                                 @auth
                                     User

@@ -247,73 +247,108 @@
         </div>
 
         <div class="col-lg-4">
-
             <div class="card">
-                <div class="card-header">
-                    <strong>Vendor Actions</strong>
-                </div>
+    <div class="card-header">
+        <strong>Vendor Actions</strong>
+    </div>
 
-                <div class="card-body">
+    <div class="card-body">
 
-                    @if($vendor->status !== 'approved')
-                        <form action="{{ route('admin.vendors.approve', $vendor) }}"
-                              method="POST"
-                              class="mb-3">
-                            @csrf
-                            @method('PATCH')
+        {{-- Approve --}}
+        @if($vendor->status !== 'approved')
+            <form action="{{ route('admin.vendors.approve', $vendor) }}"
+                  method="POST"
+                  class="vendor-action-form mb-3"
+                  data-title="Approve Vendor?"
+                  data-message="This vendor will gain access to the vendor dashboard, referral system and commission earnings."
+                  data-icon="question"
+                  data-confirm-text="Approve Vendor"
+                  data-confirm-color="#198754">
+                @csrf
+                @method('PATCH')
 
-                            <button type="submit"
-                                    class="btn btn-success w-100"
-                                    onclick="return confirm('Approve this vendor application?')">
-                                <i class="bi bi-check-circle"></i>
-                                Approve Vendor
-                            </button>
-                        </form>
-                    @endif
+                <button type="submit" class="btn btn-success w-100">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Approve Vendor
+                </button>
+            </form>
+        @endif
 
-                    @if($vendor->status === 'pending')
-                        <button type="button"
-                                class="btn btn-danger w-100 mb-3"
-                                data-bs-toggle="modal"
-                                data-bs-target="#rejectVendorModal">
-                            <i class="bi bi-x-circle"></i>
-                            Reject Vendor
-                        </button>
-                    @endif
+        {{-- Reject --}}
+        @if($vendor->status === 'pending')
+            <button type="button"
+                    class="btn btn-danger w-100 mb-3"
+                    data-bs-toggle="modal"
+                    data-bs-target="#rejectVendorModal">
+                <i class="bi bi-x-circle me-1"></i>
+                Reject Vendor
+            </button>
+        @endif
 
-                    @if($vendor->status === 'approved')
-                        <form action="{{ route('admin.vendors.suspend', $vendor) }}"
-                              method="POST"
-                              class="mb-3">
-                            @csrf
-                            @method('PATCH')
+        {{-- Approved Actions --}}
+        @if($vendor->status === 'approved')
 
-                            <button type="submit"
-                                    class="btn btn-warning w-100"
-                                    onclick="return confirm('Suspend this vendor?')">
-                                <i class="bi bi-pause-circle"></i>
-                                Suspend Vendor
-                            </button>
-                        </form>
-                    @endif
+            {{-- Suspend --}}
+            <form action="{{ route('admin.vendors.suspend', $vendor) }}"
+                  method="POST"
+                  class="vendor-action-form mb-3"
+                  data-title="Suspend Vendor?"
+                  data-message="The vendor will temporarily lose access to the dashboard, referral links and commission activities."
+                  data-icon="warning"
+                  data-confirm-text="Suspend Vendor"
+                  data-confirm-color="#ffc107">
+                @csrf
+                @method('PATCH')
 
-                    @if(in_array($vendor->status, ['rejected', 'suspended']))
-                        <form action="{{ route('admin.vendors.pending', $vendor) }}"
-                              method="POST">
-                            @csrf
-                            @method('PATCH')
+                <button type="submit" class="btn btn-warning w-100">
+                    <i class="bi bi-pause-circle me-1"></i>
+                    Suspend Vendor
+                </button>
+            </form>
 
-                            <button type="submit"
-                                    class="btn btn-outline-secondary w-100"
-                                    onclick="return confirm('Return this vendor to pending status?')">
-                                <i class="bi bi-arrow-counterclockwise"></i>
-                                Return to Pending
-                            </button>
-                        </form>
-                    @endif
+            {{-- Login As Vendor --}}
+            @if($vendor->user)
+                <form action="{{ route('admin.vendors.login-as', $vendor) }}"
+                      method="POST"
+                      class="vendor-action-form mb-3"
+                      data-title="Login as Vendor?"
+                      data-message="You are about to access {{ $vendor->user->name }}'s account. You can inspect the account exactly as the vendor sees it."
+                      data-icon="info"
+                      data-confirm-text="Login as Vendor"
+                      data-confirm-color="#0d6efd">
+                    @csrf
 
-                </div>
-            </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>
+                        Login as Vendor
+                    </button>
+                </form>
+            @endif
+
+        @endif
+
+        {{-- Return to Pending --}}
+        @if(in_array($vendor->status, ['rejected', 'suspended']))
+            <form action="{{ route('admin.vendors.mark-pending', $vendor) }}"
+                  method="POST"
+                  class="vendor-action-form"
+                  data-title="Return Vendor to Pending?"
+                  data-message="The vendor account will be moved back to the Pending state for further review."
+                  data-icon="question"
+                  data-confirm-text="Return to Pending"
+                  data-confirm-color="#6c757d">
+                @csrf
+                @method('PATCH')
+
+                <button type="submit" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>
+                    Return to Pending
+                </button>
+            </form>
+        @endif
+
+    </div>
+</div>
 
         </div>
 
@@ -384,3 +419,40 @@
     </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.vendor-action-form').forEach(function (form) {
+
+        form.addEventListener('submit', function (e) {
+
+            e.preventDefault();
+
+            Swal.fire({
+                title: form.dataset.title ?? 'Are you sure?',
+                text: form.dataset.message ?? 'Please confirm this action.',
+                icon: form.dataset.icon ?? 'question',
+                showCancelButton: true,
+                confirmButtonText: form.dataset.confirmText ?? 'Continue',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: form.dataset.confirmColor ?? '#0d6efd',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true,
+                focusCancel: true,
+                allowOutsideClick: false,
+                allowEscapeKey: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+
+        });
+
+    });
+
+});
+</script>
+@endpush

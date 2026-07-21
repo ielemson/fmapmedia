@@ -13,87 +13,28 @@
         <h1>Welcome, {{ $user->first_name }} {{ $user->last_name }}</h1>
 
         <p>
-            Promote individual FMAP Magazine editions using product-specific referral links,
-            track clicks, monitor confirmed sales, and manage your commissions from one dashboard.
+            Share your referral links, monitor sales, and track your commissions from one dashboard.
         </p>
     </div>
 
     <div class="dashboard-hero-actions">
+        <a href="{{ route('index') }}" class="btn btn-light">
+            <i class="bi bi-house-door"></i>
+            Home
+        </a>
+
         <a href="#magazines-to-promote" class="btn btn-primary">
             <i class="bi bi-journal-richtext"></i>
             Promote Magazines
         </a>
 
-        <a href="javascript:;" class="btn btn-light">
+        <a href="javascript:;" class="btn btn-outline-primary">
             <i class="bi bi-graph-up-arrow"></i>
-            View Performance
+            Performance
         </a>
     </div>
-
-    {{-- <div class="dashboard-kpi-grid">
-
-        <div class="dashboard-kpi-card">
-            <div class="dashboard-kpi-icon primary">
-                <i class="bi bi-cursor-fill"></i>
-            </div>
-
-            <div class="dashboard-kpi-content">
-                <span>Total Clicks</span>
-                <strong>{{ number_format($totalClicks ?? 0) }}</strong>
-                <small>
-                    <i class="bi bi-calendar-check"></i>
-                    Today: {{ number_format($todayClicks ?? 0) }}
-                </small>
-            </div>
-        </div>
-
-        <div class="dashboard-kpi-card">
-            <div class="dashboard-kpi-icon success">
-                <i class="bi bi-bag-check-fill"></i>
-            </div>
-
-            <div class="dashboard-kpi-content">
-                <span>Magazine Sales</span>
-                <strong>{{ number_format($totalSales ?? 0) }}</strong>
-                <small>
-                    <i class="bi bi-cash"></i>
-                    ₦{{ number_format($totalSalesAmount ?? 0, 2) }}
-                </small>
-            </div>
-        </div>
-
-        <div class="dashboard-kpi-card">
-            <div class="dashboard-kpi-icon warning">
-                <i class="bi bi-cash-stack"></i>
-            </div>
-
-            <div class="dashboard-kpi-content">
-                <span>Total Commission</span>
-                <strong>₦{{ number_format($totalCommission ?? 0, 2) }}</strong>
-                <small>
-                    <i class="bi bi-hourglass-split"></i>
-                    Pending: ₦{{ number_format($pendingCommission ?? 0, 2) }}
-                </small>
-            </div>
-        </div>
-
-        <div class="dashboard-kpi-card">
-            <div class="dashboard-kpi-icon info">
-                <i class="bi bi-bank2"></i>
-            </div>
-
-            <div class="dashboard-kpi-content">
-                <span>Available Balance</span>
-                <strong>₦{{ number_format($availableBalance ?? 0, 2) }}</strong>
-                <small>
-                    <i class="bi bi-check-circle"></i>
-                    Paid: ₦{{ number_format($paidCommission ?? 0, 2) }}
-                </small>
-            </div>
-        </div>
-
-    </div> --}}
 </div>
+
 <section class="section">
     <h5 class="section-title mb-3">Performance Overview</h5>
 

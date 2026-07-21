@@ -15,15 +15,22 @@
     </div>
 
     <div class="dashboard-hero-actions">
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-            <i class="bi bi-person-plus"></i>
-            Add User
-        </a>
+      <div class="dashboard-hero-actions">
+    <a href="{{ route('index') }}" class="btn btn-outline-primary">
+        <i class="bi bi-house-door"></i>
+        Home
+    </a>
 
-        <a href="{{ route('admin.users.index') }}" class="btn btn-light">
-            <i class="bi bi-people"></i>
-            Manage Users
-        </a>
+    <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+        <i class="bi bi-person-plus"></i>
+        Add User
+    </a>
+
+    <a href="{{ route('admin.users.index') }}" class="btn btn-light">
+        <i class="bi bi-people"></i>
+        Manage Users
+    </a>
+</div>
     </div>
 
     <div class="dashboard-kpi-grid">

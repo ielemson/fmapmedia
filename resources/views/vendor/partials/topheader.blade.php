@@ -164,6 +164,34 @@
                         </a>
                     </li> --}}
 
+                    @if(session()->has('impersonator_id'))
+
+    <li>
+        <form action="{{ route('impersonation.leave') }}" method="POST">
+            @csrf
+
+            <button type="submit" class="dropdown-item text-warning">
+                <i class="bi bi-arrow-return-left"></i>
+                Return to Admin
+            </button>
+        </form>
+    </li>
+
+@else
+
+    <li>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+
+            <button type="submit" class="dropdown-item">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </button>
+        </form>
+    </li>
+
+@endif
+
                     <li>
                         <a class="dropdown-item" href="#">
                             <i class="bi bi-life-preserver"></i> Support

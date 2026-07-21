@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminVendorController;
 use App\Http\Controllers\Admin\AdminWithdrawalController;
+use App\Http\Controllers\Admin\VendorImpersonationController;
 use App\Http\Controllers\Admin\NewsCategoryController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProductCategoryController;
@@ -305,6 +306,8 @@ Route::middleware('auth')->group(function () {
                     Route::patch('{vendor}/reject', 'reject')->name('reject');
                     Route::patch('{vendor}/suspend', 'suspend')->name('suspend');
                     Route::patch('{vendor}/mark-pending', 'markPending')->name('mark-pending');
+                    Route::post('{vendor}/login-as', [VendorImpersonationController::class, 'loginAs'])
+                        ->name('login-as');
                 });
 
             // Team members
@@ -334,6 +337,19 @@ Route::middleware('auth')->group(function () {
                     Route::put('/{service}/update', 'update')->name('update');
                     Route::delete('/{service}/delete', 'destroy')->name('destroy');
                 });
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Leave Vendor Impersonation
+    |--------------------------------------------------------------------------
+    */
+
+    Route::controller(VendorImpersonationController::class)
+        ->prefix('impersonation')
+        ->name('impersonation.')
+        ->group(function () {
+            Route::post('leave', 'leave')->name('leave');
         });
 
     /*

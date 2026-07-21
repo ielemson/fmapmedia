@@ -244,7 +244,7 @@
         <div class="text-center mt-4">
             @auth
                 @if (auth()->user()->hasRole('Vendor'))
-                    <a href="{{ route('vendor.dashboard') }}"
+                    <a href="{{ route('dashboard') }}"
                        class="btn btn-primary w-100">
                         Vendor Dashboard
                     </a>

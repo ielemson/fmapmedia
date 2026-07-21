@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Future Map Media</title>
+  <title>Vendor - Dashboard - Future Map Media</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="AppDashboard - Bootstrap Admin Dashboard Template">
   <meta name="keywords" content="admin, dashboard, bootstrap">
@@ -37,11 +37,9 @@
 </head>
 
 <body>
-
     @include("vendor.partials.topheader")
     @include("vendor.partials.mobileheader")
   
-
   <!-- Sidebar -->
 @yield("main-header")
 

@@ -310,60 +310,95 @@
                                             View
                                         </a>
 
-                                        @if($vendor->status !== 'approved')
-                                            <form action="{{ route('admin.vendors.approve', $vendor) }}"
-                                                  method="POST">
-                                                @csrf
-                                                @method('PATCH')
+                                        <div class="d-flex flex-wrap gap-2">
 
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-success"
-                                                        onclick="return confirm('Approve this vendor?')">
-                                                    <i class="bi bi-check-circle"></i>
-                                                    Approve
-                                                </button>
-                                            </form>
-                                        @endif
+    @if($vendor->status !== 'approved')
+        <form action="{{ route('admin.vendors.approve', $vendor) }}"
+              method="POST"
+              class="vendor-action-form"
+              data-title="Approve Vendor?"
+              data-message="This vendor will gain access to the vendor dashboard, referrals and commission features."
+              data-icon="question"
+              data-confirm-text="Yes, Approve Vendor"
+              data-confirm-color="#198754">
+            @csrf
+            @method('PATCH')
 
-                                        @if($vendor->status === 'pending')
-                                            <button type="button"
-                                                    class="btn btn-sm btn-danger"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#rejectVendorModal{{ $vendor->id }}">
-                                                <i class="bi bi-x-circle"></i>
-                                                Reject
-                                            </button>
-                                        @endif
+            <button type="submit" class="btn btn-sm btn-success">
+                <i class="bi bi-check-circle me-1"></i>
+                Approve
+            </button>
+        </form>
+    @endif
 
-                                        @if($vendor->status === 'approved')
-                                            <form action="{{ route('admin.vendors.suspend', $vendor) }}"
-                                                  method="POST">
-                                                @csrf
-                                                @method('PATCH')
+    @if($vendor->status === 'pending')
+        <button type="button"
+                class="btn btn-sm btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#rejectVendorModal{{ $vendor->id }}">
+            <i class="bi bi-x-circle me-1"></i>
+            Reject
+        </button>
+    @endif
 
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-warning"
-                                                        onclick="return confirm('Suspend this vendor?')">
-                                                    <i class="bi bi-pause-circle"></i>
-                                                    Suspend
-                                                </button>
-                                            </form>
-                                        @endif
+    @if($vendor->status === 'approved')
+        <form action="{{ route('admin.vendors.suspend', $vendor) }}"
+              method="POST"
+              class="vendor-action-form"
+              data-title="Suspend Vendor?"
+              data-message="The vendor will temporarily lose access to the vendor dashboard and related vendor services."
+              data-icon="warning"
+              data-confirm-text="Yes, Suspend Vendor"
+              data-confirm-color="#ffc107">
+            @csrf
+            @method('PATCH')
 
-                                        @if(in_array($vendor->status, ['rejected', 'suspended']))
-                                            <form action="{{ route('admin.vendors.mark-pending', $vendor) }}"
-                                                  method="POST">
-                                                @csrf
-                                                @method('PATCH')
+            <button type="submit" class="btn btn-sm btn-warning">
+                <i class="bi bi-pause-circle me-1"></i>
+                Suspend
+            </button>
+        </form>
 
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-outline-secondary"
-                                                        onclick="return confirm('Return this vendor to pending status?')">
-                                                    <i class="bi bi-arrow-counterclockwise"></i>
-                                                    Pending
-                                                </button>
-                                            </form>
-                                        @endif
+        @if($vendor->user)
+            <form action="{{ route('admin.vendors.login-as', $vendor) }}"
+                  method="POST"
+                  class="vendor-action-form"
+                  data-title="Login as Vendor?"
+                  data-message="You are about to enter {{ $vendor->user->name }}'s vendor account."
+                  data-icon="warning"
+                  data-confirm-text="Yes, Login as Vendor"
+                  data-confirm-color="#0d6efd">
+                @csrf
+
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>
+                    Login as Vendor
+                </button>
+            </form>
+        @endif
+    @endif
+
+    @if(in_array($vendor->status, ['rejected', 'suspended']))
+        <form action="{{ route('admin.vendors.mark-pending', $vendor) }}"
+              method="POST"
+              class="vendor-action-form"
+              data-title="Return Vendor to Pending?"
+              data-message="The vendor's status will be changed back to pending for further review."
+              data-icon="question"
+              data-confirm-text="Yes, Mark as Pending"
+              data-confirm-color="#6c757d">
+            @csrf
+            @method('PATCH')
+
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                Return to Pending
+            </button>
+        </form>
+    @endif
+
+</div>
+                                      
 
                                     </div>
                                 </td>
@@ -463,3 +498,39 @@
     </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.vendor-action-form').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const title = form.dataset.title || 'Are you sure?';
+            const message = form.dataset.message || 'Please confirm this action.';
+            const icon = form.dataset.icon || 'warning';
+            const confirmText = form.dataset.confirmText || 'Yes, Continue';
+            const confirmColor = form.dataset.confirmColor || '#0d6efd';
+
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: icon,
+                showCancelButton: true,
+                confirmButtonColor: confirmColor,
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: confirmText,
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                focusCancel: true,
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    HTMLFormElement.prototype.submit.call(form);
+                }
+            });
+        });
+    });
+});
+</script>
+@endpush
