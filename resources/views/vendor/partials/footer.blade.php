@@ -12,9 +12,9 @@
 
         <div class="footer-links">
             <a href="{{ route('dashboard') }}">Dashboard</a>
-            <a href="{{ route('admin.news.index') }}">News</a>
-            <a href="{{ route('admin.products.index') }}">Products</a>
-            <a href="{{ route('admin.users.index') }}">Users</a>
+            {{-- <a href="{{ route('admin.news.index') }}">News</a> --}}
+            {{-- <a href="{{ route('admin.products.index') }}">Products</a> --}}
+            {{-- <a href="{{ route('admin.users.index') }}">Users</a> --}}
         </div>
 
         <div class="footer-meta">

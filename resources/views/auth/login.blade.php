@@ -84,11 +84,50 @@
             </aside>
             <main class="auth-main">
                 <div class="auth-main-inner">
-                    @if(session('info'))
+                    {{-- @if(session('info'))
                     <div class="mb-4 font-medium text-sm text-blue-600">
                     {{ session('info') }}
                     </div>
-                    @endif
+                    @endif --}}
+
+                    @if (session('success') || session('error') || session('info') || $errors->any())
+
+    @php
+        if (session('success')) {
+            $type = 'success';
+            $icon = 'bi-check-circle';
+            $message = session('success');
+        } elseif (session('error')) {
+            $type = 'danger';
+            $icon = 'bi-x-circle';
+            $message = session('error');
+        } elseif (session('info')) {
+            $type = 'info';
+            $icon = 'bi-info-circle';
+            $message = session('info');
+        } else {
+            $type = 'danger';
+            $icon = 'bi-x-circle';
+            $message = $errors->first();
+        }
+    @endphp
+
+    <div class="alert alert-{{ $type }} alert-icon alert-dismissible fade show py-2 mb-4" role="alert">
+        <i class="bi {{ $icon }}"></i>
+
+        <div class="alert-icon-content">
+            {{ $message }}
+        </div>
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close">
+        </button>
+    </div>
+
+@endif
                     <a href="{{ route('index') }}" class="auth-logo auth-logo-mobile">
                         <img src="{{ asset("frontend/images/logo.png") }}" alt="FutureMap Media">
                         <span>FutureMap Media</span>

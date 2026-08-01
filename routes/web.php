@@ -129,6 +129,11 @@ Route::get('/magazines', [MagazineController::class, 'index'])
 Route::get('/magazine/{slug}', [MagazineController::class, 'show'])
     ->name('magazine.show');
 
+Route::get(
+    '/ref/{referralSlug}/product/{productSlug}',
+    [MagazineController::class, 'product']
+)->name('referral.product');
+
 /*
 |--------------------------------------------------------------------------
 | Vendor Registration
@@ -143,16 +148,16 @@ Route::controller(VendorRegisterController::class)
         Route::post('/', 'store')->name('.store');
     });
 
-/*
-|--------------------------------------------------------------------------
-| Referral Routes
-|--------------------------------------------------------------------------
-*/
+// /*
+// |--------------------------------------------------------------------------
+// | Referral Routes
+// |--------------------------------------------------------------------------
+// */
 
-Route::get(
-    '/ref/{referralSlug}/product/{productSlug}',
-    [ReferralController::class, 'product']
-)->name('referral.product');
+// Route::get(
+//     '/ref/{referralSlug}/product/{productSlug}',
+//     [ReferralController::class, 'product']
+// )->name('referral.product');
 
 /*
 |--------------------------------------------------------------------------
