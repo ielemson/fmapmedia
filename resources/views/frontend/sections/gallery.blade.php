@@ -101,15 +101,15 @@
                                             </ul>
                                         </div>
 
-                                        <h2 class="title m-b15">
-                                            <a href="{{ $albumUrl }}">
-                                                {{ $album->title }}
+                                       <h2 class="title m-b15">
+    <a href="{{ $albumUrl }}" title="{{ $album->title }}">
+        {{ \Illuminate\Support\Str::limit($album->title, 45, '...') }}
 
-                                                @if($album->location)
-                                                    <span>{{ $album->location }}</span>
-                                                @endif
-                                            </a>
-                                        </h2>
+        @if($album->location)
+            <span>{{ $album->location }}</span>
+        @endif
+    </a>
+</h2>
 
                                         @if($album->images_count > 0)
                                             <div class="text-white small mt-2">
