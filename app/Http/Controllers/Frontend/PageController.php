@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\GalleryAlbum;
+use Illuminate\View\View;
 use App\Models\Product;
 use App\Models\News;
 use App\Models\TeamMember;
@@ -44,9 +46,26 @@ public function index()
         ->latest()
         ->get();
 
+        $albums = GalleryAlbum::query()
+        ->withCount([
+            'images' => fn ($query) => $query->where('status', true),
+        ])
+        ->where('status', 'published')
+        ->where(function ($query) {
+            $query->whereNull('published_at')
+                ->orWhere('published_at', '<=', now());
+        })
+        ->orderByDesc('is_featured')
+        ->orderBy('sort_order')
+        ->latest('event_date')
+        ->latest('id')
+        ->get();
+
+
     return view('frontend.pages.home', compact(
         'magazines',
         'news',
+        'albums',
         'services',
         'teamMembers'
     ));
@@ -55,7 +74,7 @@ public function index()
 
     public function about()
     {
-        $magazines = Product::where('status', 'published')
+    $magazines = Product::where('status', 'published')
             ->latest()
             ->take(6)
             ->get();
@@ -122,5 +141,46 @@ public function index()
 
     return view('frontend.projects.index', compact('services'));
     }
+
+
+
+    public function gallery(GalleryAlbum $galleryAlbum): View
+{
+    abort_unless(
+        $galleryAlbum->status === 'published'
+        && (
+            is_null($galleryAlbum->published_at)
+            || $galleryAlbum->published_at->lte(now())
+        ),
+        404
+    );
+
+    $galleryAlbum->load([
+        'images' => function ($query) {
+            $query->where('status', true)
+                ->orderBy('sort_order')
+                ->orderBy('id');
+        },
+    ]);
+
+    $magazines = Product::where('status', 'published')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        $services = Service::query()
+            ->where('is_active', 1)
+            ->orderBy('display_order')
+            ->latest()
+            ->take(6)
+            ->get();
+            
+
+    return view('frontend.pages.gallery', [
+        'album' => $galleryAlbum,
+        'magazines' => $magazines,
+        'services' => $services,
+    ]);
+}
     
 }

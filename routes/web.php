@@ -38,7 +38,7 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SupportTicketController as AdminSupportTicketController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UserController;
-
+use App\Http\Controllers\Admin\GalleryAlbumController;
 /*
 |--------------------------------------------------------------------------
 | Customer Controllers
@@ -71,6 +71,7 @@ Route::controller(PageController::class)->group(function () {
     Route::get('/about', 'about')->name('about');
     Route::get('/contact', 'contact')->name('contact');
     Route::get('/project', 'project')->name('frontend.project');
+    Route::get('/gallery/{galleryAlbum:slug}', 'gallery')->name('gallery.show');
     Route::get('/become-a-vendor', 'becomeVendor')->name('become.vendor');
 });
 
@@ -234,6 +235,9 @@ Route::middleware('auth')->group(function () {
             // News management
             Route::resource('news-categories', NewsCategoryController::class);
             Route::resource('news', NewsController::class);
+
+            // Gallery management
+            Route::resource('gallery-albums', GalleryAlbumController::class);
 
             // Product management
             Route::resource('product-categories', ProductCategoryController::class)

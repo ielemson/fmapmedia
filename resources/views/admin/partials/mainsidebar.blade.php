@@ -160,6 +160,37 @@
                 </ul>
             </li>
 
+            {{-- Gallery --}}
+
+              <li class="nav-heading">
+                <span>Gallery Management</span>
+            </li>
+            <li class="nav-item has-submenu {{ request()->routeIs('admin.gallery-albums.*') ? 'open' : '' }}">
+    <a class="nav-link {{ request()->routeIs('admin.gallery-albums.*') ? 'active' : '' }}"
+       href="#"
+       aria-expanded="{{ request()->routeIs('admin.gallery-albums.*') ? 'true' : 'false' }}">
+        <i class="bi bi-images"></i>
+        <span>Gallery Management</span>
+        <i class="bi bi-chevron-down nav-arrow"></i>
+    </a>
+
+    <ul class="nav-submenu {{ request()->routeIs('admin.gallery-albums.*') ? 'show' : '' }}">
+        <li>
+            <a class="nav-link {{ request()->routeIs('admin.gallery-albums.index') ? 'active' : '' }}"
+               href="{{ route('admin.gallery-albums.index') }}">
+                All Gallery Albums
+            </a>
+        </li>
+
+        <li>
+            <a class="nav-link {{ request()->routeIs('admin.gallery-albums.create') ? 'active' : '' }}"
+               href="{{ route('admin.gallery-albums.create') }}">
+                Add Gallery Album
+            </a>
+        </li>
+    </ul>
+</li>
+
             <li class="nav-heading">
                 <span>Future Modules</span>
             </li>

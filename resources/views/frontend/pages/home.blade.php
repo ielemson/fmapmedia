@@ -25,6 +25,9 @@
 
         {{-- Testimonials --}}
     @include('frontend.sections.packages')
+    @include('frontend.sections.gallery')
+
+    {{-- Team Members --}}
 
     {{-- Featured Vendors --}}
     {{-- @include('frontend.sections.vendors') --}}
