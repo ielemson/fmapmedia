@@ -231,7 +231,7 @@
                             </div>
                         </div>
 
-                        {{-- Existing maths security check --}}
+                        {{-- Existing maths security check
                         <div class="col-md-6">
                             <label for="captcha" class="form-label">
                                 Security check: <strong>{{ $a }} + {{ $b }}</strong>
@@ -241,7 +241,7 @@
                             @error('captcha')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <div class="col-md-6 d-flex align-items-end">
                             <div class="form-check mb-2">

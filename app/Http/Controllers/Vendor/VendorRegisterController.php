@@ -23,14 +23,14 @@ class VendorRegisterController extends Controller
 {
     public function create()
     {
-        $a = rand(1, 9);
-        $b = rand(1, 9);
+        // $a = rand(1, 9);
+        // $b = rand(1, 9);
 
-        session([
-            'vendor_captcha' => $a + $b,
-        ]);
+        // session([
+        //     'vendor_captcha' => $a + $b,
+        // ]);
 
-        return view('auth.vendor_register', compact('a', 'b'));
+        return view('auth.vendor_register');
     }
 
     public function store(Request $request)
@@ -46,7 +46,6 @@ class VendorRegisterController extends Controller
                 'unique:users,email',
             ],
             'phone' => ['required', 'string', 'max:20'],
-            'captcha' => ['required', 'integer'],
 
             'vendor_type' => [
                 'required',
@@ -72,23 +71,6 @@ class VendorRegisterController extends Controller
         ], [
             'cf-turnstile-response.required' => 'Please complete the security verification.',
         ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Validate Session Maths CAPTCHA
-        |--------------------------------------------------------------------------
-        */
-
-        $expectedAnswer = $request->session()->get('vendor_captcha');
-
-        if (
-            $expectedAnswer === null ||
-            (int) $validated['captcha'] !== (int) $expectedAnswer
-        ) {
-            throw ValidationException::withMessages([
-                'captcha' => 'Incorrect or expired security answer. Please try again.',
-            ]);
-        }
 
         /*
         |--------------------------------------------------------------------------
@@ -195,9 +177,6 @@ class VendorRegisterController extends Controller
 
             return [$user, $vendor];
         });
-
-        // Clear the maths challenge after successful account creation.
-        $request->session()->forget('vendor_captcha');
 
         /*
         |--------------------------------------------------------------------------
