@@ -2,22 +2,26 @@
 
 @section('title', 'Join the Vendor Programme')
 
-@section('meta_description', 'Register for the FutureMap Media Vendor Programme, promote digital magazines with
+@section('meta_description',
+    'Register for the FutureMap Media Vendor Programme, promote digital magazines with
     product-specific referral links and earn commissions from confirmed sales.')
 
-@section('meta_keywords', 'FutureMap Media vendor registration, magazine affiliate Nigeria, digital magazine vendor,
+@section('meta_keywords',
+    'FutureMap Media vendor registration, magazine affiliate Nigeria, digital magazine vendor,
     referral marketing, earn magazine commission')
 
 @section('canonical_url', route('vendor.register'))
 @section('og_title', 'Join the FutureMap Media Vendor Programme')
 
-@section('og_description', 'Become a FutureMap Media vendor, promote digital magazines and earn commissions from
+@section('og_description',
+    'Become a FutureMap Media vendor, promote digital magazines and earn commissions from
     successful sales.')
 
 @section('og_url', route('vendor.register'))
 @section('twitter_title', 'FutureMap Media Vendor Registration')
 
-@section('twitter_description', 'Register as a FutureMap Media vendor and earn commissions by promoting digital
+@section('twitter_description',
+    'Register as a FutureMap Media vendor and earn commissions by promoting digital
     magazines.')
 
 @section('robots', 'noindex, nofollow')
@@ -243,7 +247,7 @@
                             @enderror
                         </div> --}}
 
-                        <div class="col-md-6 d-flex align-items-end">
+                        <div class="col-md-12 d-flex align-items-end">
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="checkbox" name="terms" id="terms" required>
                                 <label class="form-check-label" for="terms">
