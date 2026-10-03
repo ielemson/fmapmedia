@@ -1,15 +1,32 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReferralController;
-
+use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminSettingController;
 /*
 |--------------------------------------------------------------------------
 | Frontend Controllers
 |--------------------------------------------------------------------------
 */
+use App\Http\Controllers\Admin\AdminVendorController;
+use App\Http\Controllers\Admin\AdminWithdrawalController;
+use App\Http\Controllers\Admin\GalleryAlbumController;
+use App\Http\Controllers\Admin\NewsCategoryController;
+use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\ProductCategoryController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ServiceController;
+/*
+|--------------------------------------------------------------------------
+| Admin Controllers
+|--------------------------------------------------------------------------
+*/
+use App\Http\Controllers\Admin\SupportTicketController as AdminSupportTicketController;
+use App\Http\Controllers\Admin\TeamMemberController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\VendorImpersonationController;
+use App\Http\Controllers\Customer\CustomerMagazineController;
+use App\Http\Controllers\Customer\CustomerOrderController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
@@ -18,47 +35,26 @@ use App\Http\Controllers\Frontend\NewsPageController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\ServiceController as FrontendServiceController;
 use App\Http\Controllers\Frontend\TeamController;
-
-/*
-|--------------------------------------------------------------------------
-| Admin Controllers
-|--------------------------------------------------------------------------
-*/
-use App\Http\Controllers\Admin\AdminNotificationController;
-use App\Http\Controllers\Admin\AdminOrderController;
-use App\Http\Controllers\Admin\AdminSettingController;
-use App\Http\Controllers\Admin\AdminVendorController;
-use App\Http\Controllers\Admin\AdminWithdrawalController;
-use App\Http\Controllers\Admin\VendorImpersonationController;
-use App\Http\Controllers\Admin\NewsCategoryController;
-use App\Http\Controllers\Admin\NewsController;
-use App\Http\Controllers\Admin\ProductCategoryController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\ServiceController;
-use App\Http\Controllers\Admin\SupportTicketController as AdminSupportTicketController;
-use App\Http\Controllers\Admin\TeamMemberController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\GalleryAlbumController;
+use App\Http\Controllers\ProfileController;
 /*
 |--------------------------------------------------------------------------
 | Customer Controllers
 |--------------------------------------------------------------------------
 */
-use App\Http\Controllers\Customer\CustomerMagazineController;
-use App\Http\Controllers\Customer\CustomerOrderController;
-
+use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\Vendor\SupportTicketController as VendorSupportTicketController;
 /*
 |--------------------------------------------------------------------------
 | Vendor Controllers
 |--------------------------------------------------------------------------
 */
-use App\Http\Controllers\Vendor\SupportTicketController as VendorSupportTicketController;
 use App\Http\Controllers\Vendor\VendorBankAccountController;
 use App\Http\Controllers\Vendor\VendorCommissionController;
 use App\Http\Controllers\Vendor\VendorNotificationController;
 use App\Http\Controllers\Vendor\VendorRegisterController;
 use App\Http\Controllers\Vendor\VendorSalesController;
 use App\Http\Controllers\Vendor\VendorWithdrawalController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -146,7 +142,10 @@ Route::controller(VendorRegisterController::class)
     ->name('vendor.register')
     ->group(function () {
         Route::get('/', 'create');
-        Route::post('/', 'store')->name('.store');
+
+        Route::post('/', 'store')
+            ->middleware('throttle:5,1')
+            ->name('.store');
     });
 
 // /*
@@ -438,4 +437,4 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

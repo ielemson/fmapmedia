@@ -9,14 +9,12 @@
     referral marketing, earn magazine commission')
 
 @section('canonical_url', route('vendor.register'))
-
 @section('og_title', 'Join the FutureMap Media Vendor Programme')
 
 @section('og_description', 'Become a FutureMap Media vendor, promote digital magazines and earn commissions from
     successful sales.')
 
 @section('og_url', route('vendor.register'))
-
 @section('twitter_title', 'FutureMap Media Vendor Registration')
 
 @section('twitter_description', 'Register as a FutureMap Media vendor and earn commissions by promoting digital
@@ -40,40 +38,39 @@
             </p>
         </div>
 
-       <div class="auth-signal-grid">
+        <div class="auth-signal-grid">
+            <div>
+                <i class="bi bi-upc-scan"></i>
+                <strong>Code</strong>
+                <span>Vendor ID</span>
+            </div>
 
-    <div>
-        <i class="bi bi-upc-scan"></i>
-        <strong>Code</strong>
-        <span>Vendor ID</span>
-    </div>
+            <div>
+                <i class="bi bi-link-45deg"></i>
+                <strong>Link</strong>
+                <span>Referral Sales</span>
+            </div>
 
-    <div>
-        <i class="bi bi-link-45deg"></i>
-        <strong>Link</strong>
-        <span>Referral Sales</span>
-    </div>
+            <div>
+                <i class="bi bi-cash-coin"></i>
+                <strong>Earn</strong>
+                <span>Commission</span>
+            </div>
 
-    <div>
-        <i class="bi bi-cash-coin"></i>
-        <strong>Earn</strong>
-        <span>Commission</span>
-    </div>
-
-    <div>
-        <i class="bi bi-graph-up-arrow"></i>
-        <strong>Grow</strong>
-        <span>Your Business</span>
-    </div>
-
-</div>
+            <div>
+                <i class="bi bi-graph-up-arrow"></i>
+                <strong>Grow</strong>
+                <span>Your Business</span>
+            </div>
+        </div>
 
         <div class="auth-brand-card">
             <i class="bi bi-megaphone"></i>
             <div>
                 <strong>How it works</strong>
                 <span>
-                    Apply, get approved, receive your vendor code, then start promoting FMAP Magazine.
+                    Apply, get approved, receive your vendor code,
+                    then start promoting FMAP Magazine.
                 </span>
             </div>
         </div>
@@ -81,7 +78,6 @@
 
     <main class="auth-main">
         <div class="auth-main-inner">
-
             <a href="{{ route('index') }}" class="auth-logo auth-logo-mobile">
                 <img src="{{ asset('frontend/images/logo.png') }}" alt="FutureMap Media">
                 <span>FutureMap Media</span>
@@ -111,16 +107,17 @@
                             <label for="first_name" class="form-label">First Name</label>
                             <input type="text" name="first_name" id="first_name" value="{{ old('first_name') }}"
                                 class="form-control @error('first_name') is-invalid @enderror" placeholder="First name"
-                                required autofocus>
+                                autocomplete="given-name" required autofocus>
                             @error('first_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
                         <div class="col-md-6">
                             <label for="last_name" class="form-label">Last Name</label>
                             <input type="text" name="last_name" id="last_name" value="{{ old('last_name') }}"
                                 class="form-control @error('last_name') is-invalid @enderror" placeholder="Last name"
-                                required autofocus>
+                                autocomplete="family-name" required>
                             @error('last_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -130,7 +127,7 @@
                             <label for="business_name" class="form-label">Business / Brand</label>
                             <input type="text" name="business_name" id="business_name" value="{{ old('business_name') }}"
                                 class="form-control @error('business_name') is-invalid @enderror"
-                                placeholder="Business or brand name" required>
+                                placeholder="Business or brand name" autocomplete="organization" required>
                             @error('business_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -140,7 +137,7 @@
                             <label for="email" class="form-label">Email address</label>
                             <input type="email" name="email" id="email" value="{{ old('email') }}"
                                 class="form-control @error('email') is-invalid @enderror" placeholder="name@example.com"
-                                required>
+                                autocomplete="email" required>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -148,9 +145,9 @@
 
                         <div class="col-md-6">
                             <label for="phone" class="form-label">Phone number</label>
-                            <input type="text" name="phone" id="phone" value="{{ old('phone') }}"
+                            <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
                                 class="form-control @error('phone') is-invalid @enderror" placeholder="08012345678"
-                                required>
+                                autocomplete="tel" required>
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -162,15 +159,20 @@
                                 class="form-control @error('vendor_type') is-invalid @enderror" required>
                                 <option value="">Select vendor type</option>
                                 <option value="Individual" {{ old('vendor_type') == 'Individual' ? 'selected' : '' }}>
-                                    Individual</option>
-                                <option value="Business" {{ old('vendor_type') == 'Business' ? 'selected' : '' }}>Business
+                                    Individual
+                                </option>
+                                <option value="Business" {{ old('vendor_type') == 'Business' ? 'selected' : '' }}>
+                                    Business
                                 </option>
                                 <option value="Organization" {{ old('vendor_type') == 'Organization' ? 'selected' : '' }}>
-                                    Organization</option>
+                                    Organization
+                                </option>
                                 <option value="Institution" {{ old('vendor_type') == 'Institution' ? 'selected' : '' }}>
-                                    Institution</option>
+                                    Institution
+                                </option>
                                 <option value="Student Ambassador"
-                                    {{ old('vendor_type') == 'Student Ambassador' ? 'selected' : '' }}>Student Ambassador
+                                    {{ old('vendor_type') == 'Student Ambassador' ? 'selected' : '' }}>
+                                    Student Ambassador
                                 </option>
                             </select>
                             @error('vendor_type')
@@ -181,7 +183,8 @@
                         <div class="col-md-6">
                             <label for="state" class="form-label">State</label>
                             <input type="text" name="state" id="state" value="{{ old('state') }}"
-                                class="form-control @error('state') is-invalid @enderror" placeholder="State" required>
+                                class="form-control @error('state') is-invalid @enderror" placeholder="State"
+                                autocomplete="address-level1" required>
                             @error('state')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -190,7 +193,8 @@
                         <div class="col-md-6">
                             <label for="city" class="form-label">City</label>
                             <input type="text" name="city" id="city" value="{{ old('city') }}"
-                                class="form-control @error('city') is-invalid @enderror" placeholder="City" required>
+                                class="form-control @error('city') is-invalid @enderror" placeholder="City"
+                                autocomplete="address-level2" required>
                             @error('city')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -201,8 +205,9 @@
                             <div class="input-group">
                                 <input type="password" name="password" id="password"
                                     class="form-control @error('password') is-invalid @enderror" placeholder="Password"
-                                    required>
-                                <button class="btn btn-outline-secondary" type="button" data-toggle-password>
+                                    autocomplete="new-password" required>
+                                <button class="btn btn-outline-secondary" type="button" data-toggle-password
+                                    title="Show password" aria-label="Show password">
                                     <i class="bi bi-eye"></i>
                                 </button>
                                 @error('password')
@@ -212,16 +217,21 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="password_confirmation" class="form-label">Confirm password</label>
+                            <label for="password_confirmation" class="form-label">
+                                Confirm password
+                            </label>
                             <div class="input-group">
                                 <input type="password" name="password_confirmation" id="password_confirmation"
-                                    class="form-control" placeholder="Confirm password" required>
-                                <button class="btn btn-outline-secondary" type="button" data-toggle-password>
+                                    class="form-control" placeholder="Confirm password" autocomplete="new-password"
+                                    required>
+                                <button class="btn btn-outline-secondary" type="button" data-toggle-password
+                                    title="Show password" aria-label="Show password">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
                         </div>
 
+                        {{-- Existing maths security check --}}
                         <div class="col-md-6">
                             <label for="captcha" class="form-label">
                                 Security check: <strong>{{ $a }} + {{ $b }}</strong>
@@ -239,7 +249,29 @@
                                 <label class="form-check-label" for="terms">
                                     I agree to the Vendor Terms and approval process.
                                 </label>
+                                @error('terms')
+                                    <div class="text-danger mt-2">{{ $message }}</div>
+                                @enderror
                             </div>
+                        </div>
+
+                        {{-- Cloudflare Turnstile security verification --}}
+                        <div class="col-12">
+                            <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}"
+                                data-action="vendor_register" data-theme="auto" data-size="flexible"></div>
+
+                            @error('cf-turnstile-response')
+                                <div class="text-danger mt-2" role="alert">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                            <noscript>
+                                <div class="text-danger mt-2">
+                                    Please enable JavaScript to complete security
+                                    verification and submit your vendor application.
+                                </div>
+                            </noscript>
                         </div>
                     </div>
 
@@ -268,7 +300,11 @@
                     <a href="#">Help</a>
                 </div>
             </footer>
-
         </div>
     </main>
 @endsection
+
+@push('scripts')
+    {{-- Load once; remove this if already included in layouts.auth --}}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+@endpush

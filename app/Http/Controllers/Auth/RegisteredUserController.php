@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -28,42 +30,97 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
- public function store(Request $request): RedirectResponse
-{
-    // $request->validate([
-    //     'name' => ['required', 'string', 'max:255'],
-    //     'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-    //     'password' => ['required', 'confirmed', Rules\Password::defaults()],
-    // ]);
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'unique:'.User::class,
+            ],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::defaults(),
+            ],
+            'cf-turnstile-response' => [
+                'required',
+                'string',
+                'max:2048',
+            ],
+        ], [
+            'cf-turnstile-response.required' => 'Please complete the security verification.',
+        ]);
 
-    // $user = User::create([
-    //     'name' => $request->name,
-    //     'email' => $request->email,
-    //     'password' => Hash::make($request->password),
-    // ]);
+        // Verify Turnstile before creating an account.
+        $secretKey = config('services.turnstile.secret_key');
+        $expectedHostname = config('services.turnstile.hostname');
 
-    $request->validate([
-    'first_name' => ['required', 'string', 'max:100'],
-    'last_name'  => ['required', 'string', 'max:100'],
-    'email'      => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-    'password'   => ['required', 'confirmed', Rules\Password::defaults()],
-]);
+        // Reject registration if server configuration is incomplete.
+        if (
+            ! is_string($secretKey) || trim($secretKey) === '' ||
+            ! is_string($expectedHostname) || trim($expectedHostname) === ''
+        ) {
+            throw ValidationException::withMessages([
+                'cf-turnstile-response' => 'Registration is temporarily unavailable. Please try again later.',
+            ]);
+        }
 
-$user = User::create([
-    'first_name' => $request->first_name,
-    'last_name'  => $request->last_name,
-    'email'      => $request->email,
-    'password'   => Hash::make($request->password),
-]);
+        $verification = [];
 
+        try {
+            $response = Http::asForm()
+                ->connectTimeout(5)
+                ->timeout(10)
+                ->post(
+                    'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+                    [
+                        'secret' => $secretKey,
+                        'response' => $validated['cf-turnstile-response'],
+                    ]
+                );
 
-    // Assign default role
-    $user->assignRole('Customer');
+            if ($response->successful()) {
+                $result = $response->json();
 
-    event(new Registered($user));
+                if (is_array($result)) {
+                    $verification = $result;
+                }
+            }
+        } catch (ConnectionException $exception) {
+            throw ValidationException::withMessages([
+                'cf-turnstile-response' => 'Security verification is temporarily unavailable. Please refresh the page and try again.',
+            ]);
+        }
 
-    Auth::login($user);
+        if (
+            ($verification['success'] ?? false) !== true ||
+            ($verification['action'] ?? '') !== 'register' ||
+            ($verification['hostname'] ?? '') !== $expectedHostname
+        ) {
+            throw ValidationException::withMessages([
+                'cf-turnstile-response' => 'Security verification failed. Please refresh the page and try again.',
+            ]);
+        }
 
-    return redirect(route('dashboard', absolute: false));
-}
+        $user = User::create([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        $user->assignRole('Customer');
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(route('dashboard', absolute: false));
+    }
 }
