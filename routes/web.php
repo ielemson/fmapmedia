@@ -3,11 +3,6 @@
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminSettingController;
-/*
-|--------------------------------------------------------------------------
-| Frontend Controllers
-|--------------------------------------------------------------------------
-*/
 use App\Http\Controllers\Admin\AdminVendorController;
 use App\Http\Controllers\Admin\AdminWithdrawalController;
 use App\Http\Controllers\Admin\GalleryAlbumController;
@@ -16,11 +11,6 @@ use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ServiceController;
-/*
-|--------------------------------------------------------------------------
-| Admin Controllers
-|--------------------------------------------------------------------------
-*/
 use App\Http\Controllers\Admin\SupportTicketController as AdminSupportTicketController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UserController;
@@ -36,18 +26,7 @@ use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\ServiceController as FrontendServiceController;
 use App\Http\Controllers\Frontend\TeamController;
 use App\Http\Controllers\ProfileController;
-/*
-|--------------------------------------------------------------------------
-| Customer Controllers
-|--------------------------------------------------------------------------
-*/
-use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\Vendor\SupportTicketController as VendorSupportTicketController;
-/*
-|--------------------------------------------------------------------------
-| Vendor Controllers
-|--------------------------------------------------------------------------
-*/
 use App\Http\Controllers\Vendor\VendorBankAccountController;
 use App\Http\Controllers\Vendor\VendorCommissionController;
 use App\Http\Controllers\Vendor\VendorNotificationController;
@@ -58,7 +37,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Public Frontend Routes
+| Public Pages
 |--------------------------------------------------------------------------
 */
 
@@ -73,25 +52,24 @@ Route::controller(PageController::class)->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Contact Routes
+| Contact Submissions
 |--------------------------------------------------------------------------
+|
+| Turnstile is verified inside ContactController.
+| The legacy POST URL uses the same validation and rate limit.
+|
 */
 
-// Legacy aliases retained for backward compatibility.
-Route::get('/contact-us/captcha', [ContactController::class, 'captcha']);
-Route::post('/contact-us', [ContactController::class, 'store'])
-    ->middleware('throttle:5,1');
-
-Route::get('/contact/captcha', [ContactController::class, 'captcha'])
-    ->name('contact.captcha');
-
-Route::post('/contact', [ContactController::class, 'store'])
+Route::controller(ContactController::class)
     ->middleware('throttle:5,1')
-    ->name('contact.store');
+    ->group(function () {
+        Route::post('/contact', 'store')->name('contact.store');
+        Route::post('/contact-us', 'store');
+    });
 
 /*
 |--------------------------------------------------------------------------
-| News, Team and Service Routes
+| News
 |--------------------------------------------------------------------------
 */
 
@@ -102,6 +80,12 @@ Route::controller(NewsPageController::class)
         Route::get('/', 'index')->name('index');
         Route::get('{slug}', 'show')->name('show');
     });
+
+/*
+|--------------------------------------------------------------------------
+| Team and Services
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/team/{teamMember:slug}', [TeamController::class, 'show'])
     ->name('team.member.show');
@@ -116,7 +100,7 @@ Route::controller(FrontendServiceController::class)
 
 /*
 |--------------------------------------------------------------------------
-| Public Magazine Routes
+| Public Magazines and Referrals
 |--------------------------------------------------------------------------
 */
 
@@ -148,20 +132,9 @@ Route::controller(VendorRegisterController::class)
             ->name('.store');
     });
 
-// /*
-// |--------------------------------------------------------------------------
-// | Referral Routes
-// |--------------------------------------------------------------------------
-// */
-
-// Route::get(
-//     '/ref/{referralSlug}/product/{productSlug}',
-//     [ReferralController::class, 'product']
-// )->name('referral.product');
-
 /*
 |--------------------------------------------------------------------------
-| Checkout Routes
+| Checkout
 |--------------------------------------------------------------------------
 */
 
@@ -169,7 +142,7 @@ Route::controller(CheckoutController::class)
     ->prefix('checkout')
     ->name('checkout.')
     ->group(function () {
-        // Keep the static callback route before the dynamic {slug} route.
+        // Static callback must precede the dynamic magazine route.
         Route::get('paystack/callback', 'paystackCallback')
             ->name('paystack.callback');
 
@@ -195,7 +168,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Customer Dashboard Routes
+    | Customer Dashboard
     |--------------------------------------------------------------------------
     */
 
@@ -224,33 +197,36 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Admin Dashboard Routes
+    | Admin Dashboard
     |--------------------------------------------------------------------------
     */
 
     Route::prefix('dashboard/admin')
         ->name('admin.')
         ->group(function () {
-            // News management
+            // News
             Route::resource('news-categories', NewsCategoryController::class);
             Route::resource('news', NewsController::class);
 
-            // Gallery management
+            // Gallery
             Route::resource('gallery-albums', GalleryAlbumController::class);
 
-            // Product management
+            // Products
             Route::resource('product-categories', ProductCategoryController::class)
                 ->except(['show']);
+
             Route::resource('products', ProductController::class);
 
-            // User management
+            // Users
             Route::patch('users/{user}/suspend', [UserController::class, 'suspend'])
                 ->name('users.suspend');
+
             Route::patch('users/{user}/activate', [UserController::class, 'activate'])
                 ->name('users.activate');
+
             Route::resource('users', UserController::class);
 
-            // Order management
+            // Orders
             Route::controller(AdminOrderController::class)
                 ->prefix('orders')
                 ->name('orders.')
@@ -276,12 +252,18 @@ Route::middleware('auth')->group(function () {
                 ->group(function () {
                     Route::get('/', 'index')->name('index');
                     Route::get('{withdrawal}', 'show')->name('show');
-                    Route::patch('{withdrawal}/approve', 'approve')->name('approve');
-                    Route::patch('{withdrawal}/reject', 'reject')->name('reject');
-                    Route::patch('{withdrawal}/mark-paid', 'markAsPaid')->name('mark-paid');
+
+                    Route::patch('{withdrawal}/approve', 'approve')
+                        ->name('approve');
+
+                    Route::patch('{withdrawal}/reject', 'reject')
+                        ->name('reject');
+
+                    Route::patch('{withdrawal}/mark-paid', 'markAsPaid')
+                        ->name('mark-paid');
                 });
 
-            // Support tickets
+            // Support
             Route::controller(AdminSupportTicketController::class)
                 ->prefix('support')
                 ->name('support.')
@@ -289,21 +271,27 @@ Route::middleware('auth')->group(function () {
                     Route::get('/', 'index')->name('index');
                     Route::get('{supportTicket}', 'show')->name('show');
                     Route::post('{supportTicket}/reply', 'reply')->name('reply');
-                    Route::patch('{supportTicket}/status', 'updateStatus')->name('status');
-                    Route::patch('{supportTicket}/priority', 'updatePriority')->name('priority');
-                    Route::patch('{supportTicket}/assign', 'assign')->name('assign');
+
+                    Route::patch('{supportTicket}/status', 'updateStatus')
+                        ->name('status');
+
+                    Route::patch('{supportTicket}/priority', 'updatePriority')
+                        ->name('priority');
+
+                    Route::patch('{supportTicket}/assign', 'assign')
+                        ->name('assign');
                 });
 
-            // General settings
+            // Settings
             Route::controller(AdminSettingController::class)
                 ->prefix('settings')
                 ->name('settings.')
                 ->group(function () {
-                    Route::get('/general', 'edit')->name('general');
-                    Route::put('/general/update', 'update')->name('general.update');
+                    Route::get('general', 'edit')->name('general');
+                    Route::put('general/update', 'update')->name('general.update');
                 });
 
-            // Vendor management
+            // Vendors
             Route::controller(AdminVendorController::class)
                 ->prefix('vendors')
                 ->name('vendors.')
@@ -313,9 +301,14 @@ Route::middleware('auth')->group(function () {
                     Route::patch('{vendor}/approve', 'approve')->name('approve');
                     Route::patch('{vendor}/reject', 'reject')->name('reject');
                     Route::patch('{vendor}/suspend', 'suspend')->name('suspend');
-                    Route::patch('{vendor}/mark-pending', 'markPending')->name('mark-pending');
-                    Route::post('{vendor}/login-as', [VendorImpersonationController::class, 'loginAs'])
-                        ->name('login-as');
+
+                    Route::patch('{vendor}/mark-pending', 'markPending')
+                        ->name('mark-pending');
+
+                    Route::post(
+                        '{vendor}/login-as',
+                        [VendorImpersonationController::class, 'loginAs']
+                    )->name('login-as');
                 });
 
             // Team members
@@ -324,12 +317,12 @@ Route::middleware('auth')->group(function () {
                 ->name('team-members.')
                 ->group(function () {
                     Route::get('/', 'index')->name('index');
-                    Route::get('/create', 'create')->name('create');
-                    Route::post('/store', 'store')->name('store');
-                    Route::get('/{teamMember}', 'show')->name('show');
-                    Route::get('/{teamMember}/edit', 'edit')->name('edit');
-                    Route::put('/{teamMember}/update', 'update')->name('update');
-                    Route::delete('/{teamMember}/delete', 'destroy')->name('destroy');
+                    Route::get('create', 'create')->name('create');
+                    Route::post('store', 'store')->name('store');
+                    Route::get('{teamMember}', 'show')->name('show');
+                    Route::get('{teamMember}/edit', 'edit')->name('edit');
+                    Route::put('{teamMember}/update', 'update')->name('update');
+                    Route::delete('{teamMember}/delete', 'destroy')->name('destroy');
                 });
 
             // Services
@@ -338,12 +331,12 @@ Route::middleware('auth')->group(function () {
                 ->name('services.')
                 ->group(function () {
                     Route::get('/', 'index')->name('index');
-                    Route::get('/create', 'create')->name('create');
-                    Route::post('/store', 'store')->name('store');
-                    Route::get('/{service}', 'show')->name('show');
-                    Route::get('/{service}/edit', 'edit')->name('edit');
-                    Route::put('/{service}/update', 'update')->name('update');
-                    Route::delete('/{service}/delete', 'destroy')->name('destroy');
+                    Route::get('create', 'create')->name('create');
+                    Route::post('store', 'store')->name('store');
+                    Route::get('{service}', 'show')->name('show');
+                    Route::get('{service}/edit', 'edit')->name('edit');
+                    Route::put('{service}/update', 'update')->name('update');
+                    Route::delete('{service}/delete', 'destroy')->name('destroy');
                 });
         });
 
@@ -353,35 +346,29 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::controller(VendorImpersonationController::class)
-        ->prefix('impersonation')
-        ->name('impersonation.')
-        ->group(function () {
-            Route::post('leave', 'leave')->name('leave');
-        });
+    Route::post(
+        '/impersonation/leave',
+        [VendorImpersonationController::class, 'leave']
+    )->name('impersonation.leave');
 
     /*
     |--------------------------------------------------------------------------
-    | Vendor Dashboard Routes
+    | Vendor Dashboard
     |--------------------------------------------------------------------------
     */
 
     Route::prefix('dashboard/vendor')
         ->name('vendor.')
         ->group(function () {
-            // Bank accounts
             Route::resource('bank-accounts', VendorBankAccountController::class)
                 ->except(['show']);
 
-            // Sales
             Route::get('sales', [VendorSalesController::class, 'index'])
                 ->name('sales.index');
 
-            // Commissions
             Route::get('commissions', [VendorCommissionController::class, 'index'])
                 ->name('commissions.index');
 
-            // Withdrawals
             Route::controller(VendorWithdrawalController::class)
                 ->prefix('withdrawals')
                 ->name('withdrawals.')
@@ -390,7 +377,6 @@ Route::middleware('auth')->group(function () {
                     Route::post('/', 'store')->name('store');
                 });
 
-            // Notifications
             Route::controller(VendorNotificationController::class)
                 ->prefix('notifications')
                 ->name('notifications.')
@@ -400,7 +386,6 @@ Route::middleware('auth')->group(function () {
                     Route::get('{notification}', 'show')->name('show');
                 });
 
-            // Support tickets
             Route::controller(VendorSupportTicketController::class)
                 ->prefix('support')
                 ->name('support.')
@@ -417,7 +402,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Profile Routes
+    | Profile
     |--------------------------------------------------------------------------
     */
 
@@ -433,7 +418,7 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Authentication Routes
+| Authentication
 |--------------------------------------------------------------------------
 */
 
